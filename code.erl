@@ -163,7 +163,7 @@ end
 
 {Method, TaskName, VarSpecs} =
   ?Z_CATCH({_, _, _} = lists:keyfind(Method, 1,
-                                     TaskSpecs)
+                                     TaskSpecs),
            bad_method)
 
 TaskVarsRoute =
@@ -213,18 +213,19 @@ error({bad_var, Var}) ->
 
 test_handler_base(Data) ->
     try
-        Login = proplist_get(Data, login),
-        Password = proplist_get(Data, password),
-        SessionBin = proplist_get(Data, session_id),
-        Session = bin_to_int(SessionBin),
-        GoodUserBin = proplist_get(Data, good_user),
-        GoodUser = bin_to_bool(GoodUserBin),
-        SomeOtherIdBin = proplist_get(Data, some_other_id),
-        SomeOtherId = bin_to_int(SomeOtherIdBin),
+        Login           = proplist_get(Data, login),
+        Password        = proplist_get(Data, password),
+        SessionBin      = proplist_get(Data, session_id),
+        Session         = bin_to_int(SessionBin),
+        GoodUserBin     = proplist_get(Data, good_user),
+        GoodUser        = bin_to_bool(GoodUserBin),
+        SomeOtherIdBin  = proplist_get(Data, some_other_id),
+        SomeOtherId     = bin_to_int(SomeOtherIdBin),
         YetAnotherIdBin = proplist_get(Data, yet_another_id),
-        YetAnotherId = bin_to_int(YetAnotherIdBin),
-        ExtraDataBin = proplist_get(Data, extra_data),
-        ExtraData = bin_to_term(ExtraDataBin),
+        YetAnotherId    = bin_to_int(YetAnotherIdBin),
+        ExtraDataBin    = proplist_get(Data, extra_data),
+        ExtraData       = bin_to_term(ExtraDataBin),
+
         #request{login=Login, password=Password, ...}
     catch A:B -> {A, B}
     end.
