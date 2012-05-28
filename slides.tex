@@ -38,7 +38,7 @@
 % \end{textblock*}}
 
 \begin{document}
-
+\renewcommand*{\inserttotalframenumber}{\pageref{lastframe}}
 \begin{frame}
 \titlepage
 \end{frame}
@@ -60,9 +60,6 @@
 
 \begin{frame}{Not a real solution}
   \code{code.erl}{19}{29}{erlang}
-\end{frame}
-
-\begin{frame}{Not a real solution}
   \begin{itemize}
   \item Still messy
   \item Nonsensical function names
@@ -78,7 +75,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Sheriff}
+\begin{frame}{Meet Sheriff!}
   \begin{center}
     \Large
     Sheriff: https://github.com/extend/sheriff
@@ -89,33 +86,21 @@
   \code{code.erl}{31}{37}{erlang}
 \end{frame}
 
-\begin{frame}{Still hurts}
+\begin{frame}{Still not good enough}
   \code{code.erl}{39}{46}{erlang}
 \end{frame}
 
 \begin{frame}{Expressiveness problem}
-  \begin{center}
-    \large
-    IP: 183.234.123.93
-  \end{center}
-\end{frame}
-
-\begin{frame}{Expressiveness problem}
-  \begin{center}
-    \large
-    IPv6: E3D7:0000:0000:0000:51F4:9BC8:C0A8:6420\\
-    shortcut: E3D7::51F4:9BC8:C0A8:6420\\
-    mixed: E3D7::51F4:9BC8:192.168.100.32\\
-    \emph{regexpable after all?}
-  \end{center}
-\end{frame}
-
-\begin{frame}{Expressiveness problem}
-  \begin{center}
-    \large
-    if IP=127.0.0.1, port != 1234 (reserver for internal services)\\
-    \emph{not so regexpable}
-  \end{center}
+  \begin{itemize}
+  \item<1-> IP: 183.234.123.93
+  \item<1-> 4 numbers and dots?
+  \item<2-> IPv6: E3D7:0000:0000:0000:51F4:9BC8:C0A8:6420
+  \item<2-> shortcut: E3D7::51F4:9BC8:C0A8:6420
+  \item<2-> mixed: E3D7::51F4:9BC8:192.168.100.32
+  \item<2-> regexpable after all?
+  \item<3-> if IP=127.0.0.1, port != 1234 (reserved for internal services)
+  \item<3-> not so regexpable
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Not a real solution again}
@@ -195,136 +180,109 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{z_validate}
+\begin{frame}{z\_validate}
   \begin{center}
     \Large
-    z_validate: https://github.com/si14/z_validate
+    z\_validate: https://github.com/si14/z\_validate
   \end{center}
 \end{frame}
 
 \begin{frame}{About this library}
-
+  \begin{itemize}
+  \item started at EUC 2011 hackathon
+  \item intended to solve exactly this problem without excessive abstraction
+  \item provides some shortcuts like binary\_to\_integer and wrapper to lists:keyfind
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Ошибки}
+\begin{frame}{First idea: tag values with error labels}
   \begin{center}
-    \includegraphics[scale=0.6]{plot.pdf}
+    \large
+    z\_value = value (probably incorrect) + error label
   \end{center}
 \end{frame}
 
+\begin{frame}{First idea: tag values with error labels}
+  \code{code.erl}{122}{133}{erlang}
+\end{frame}
 
-\begin{frame}{Ошибки}
+\begin{frame}{Composable!}
+  \code{code.erl}{134}{138}{erlang}
+\end{frame}
+
+\begin{frame}{Second idea}
+  \code{code.erl}{140}{145}{erlang}
+  Turned out to be practical
+\end{frame}
+
+\begin{frame}{Handler example}
+  \footnotesize
+  \code{code.erl}{147}{162}{erlang}
+\end{frame}
+
+\begin{frame}{Pattern matching works well}
+  \small
+  \code{code.erl}{164}{167}{erlang}
+\end{frame}
+
+\begin{frame}{Plays well with lists}
+  \small
+  \code{code.erl}{169}{172}{erlang}
+\end{frame}
+
+\begin{frame}{Push Z\_CATCH inside list comprehension}
+  \small
+  \code{code.erl}{174}{176}{erlang}
+\end{frame}
+
+\begin{frame}{Error dispatch}
+  \code{code.erl}{178}{183}{erlang}
+\end{frame}
+
+\begin{frame}{Problems}
+  \begin{itemize}
+  \item looks non-idiomatic
+  \item Dialyzer isn't good at exceptions
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Dialyzer fail}
+  \code{dialyzer_fail.erl}{4}{15}{erlang}
+\end{frame}
+
+\begin{frame}{Performance tests: good data}
+  \code{code.erl}{185}{193}{erlang}
+\end{frame}
+
+\begin{frame}{Performance tests: bad data}
+  \code{code.erl}{195}{202}{erlang}
+\end{frame}
+
+\begin{frame}{Performance tests: bad data}
+  \code{code.erl}{204}{212}{erlang}
+\end{frame}
+
+\begin{frame}{Performance tests: baseline handler}
+  \footnotesize
+  \code{code.erl}{214}{230}{erlang}
+  12 statements
+\end{frame}
+
+\begin{frame}{Performance comparison}
   \begin{center}
-    Все делают ошибки, однако некоторые думают об ошибках так:\vspace{3mm}\\
-    \includegraphics[height=6cm]{ostrich}
+    \includegraphics[scale=0.55]{plot.pdf}
   \end{center}
 \end{frame}
 
-\begin{frame}{Ошибки}
+\begin{frame}\label{lastframe}
   \begin{center}
-    Но лучше делать это так:\vspace{3mm}\\
-    \includegraphics[height=6cm]{attack}
+    \Large
+    Questions?\\\vspace{15pt}
   \end{center}
-\end{frame}
-
-\begin{frame}{Ошибки}
-  \begin{center}
-    Для этого нужно знать о враге больше!
-  \end{center}
-\end{frame}
-
-\begin{frame}{Короткий план доклада}
-  \begin{itemize}
-  \item общие соображения
-    \begin{itemize}
-    \item классификация ошибок
-    \item о балансе
-    \item простые и сложные ошибки
-    \item третий путь
-    \item всё ещё хуже — ошибки перегрузки, ошибки параллелизма
-    \end{itemize}
-  \item грязные подробности
-    \begin{itemize}
-    \item исторически сложившиеся методы обработки ошибок
-    \item велосипеды
-    \item пример кода
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{}
-  \begin{center}
-    \huge Часть 1: общие соображения
-  \end{center}
-\end{frame}
-
-\begin{frame}{Классификация}
-  Наиболее очевидная классификация по времени появления:
-  \begin{itemize}
-  \item времени компиляции
-  \item времени выполнения
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Ремарка о балансе}
-  Когда ловить ошибки?
-  \begin{itemize}
-  \item во время компиляции — код либо сложнее, либо многословнее
-  \item во время выполнения — падает надёжность, ведь запуск кода не гарантирует его работоспособности
-  \end{itemize}
-  Необходим баланс между этими крайностями
-\end{frame}
-
-\begin{frame}[fragile]{«Простые» ошибки}
-  Ошибки бывают очевидными:
-  \code{code.py}{1}{3}{python}
-  \begin{itemize}
-  \item JS: «это не ошибка»
-  \item Python: «добавь try/except»
-  \item Java: «где типы?»
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{«Это не ошибка»}
-  \begin{center}
-    \light{Этот слайд оставлен пустым в память всех жертв плохого дизайна}
-  \end{center}
-\end{frame}
-
-\begin{frame}{«Добавь try/except»}
-  \code{code.py}{5}{10}{python}
-  \begin{itemize}
-  \item повседневная реальность большинства разработчиков
-  \item требует юнит-тестов
-  \item 100\% покрытие ничего не гарантирует
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{«Где типы?»}
-  \code{code.java}{1}{7}{java}
-  \begin{itemize}
-  \item этот код даже не скомпилируется
-  \item этого кода слишком много
-  \item люди не любят писать много и отказываются от типов вообще
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{«Где типы?»}
-  \code{code.hs}{1}{3}{haskell}
-  \begin{itemize}
-  \item этот код тоже не скомпилируется
-  \item типы a и b однозначно вытекают из соответствующих литералов — зачем их указывать?
-  \item компилятор может пытаться выводить типы сам
-  \item не все корректные программы могут пройти проверку типов
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Проблема статической типизации}
-  Ещё раз: \emph{не все корректные программы статически типизируемы}\vspace{2em}\\
-  Или: \emph{любая система типов может мешать программисту}
-\end{frame}
-
-\begin{frame}{Проблема статической типизации}
-  Пример:
-  \code{code.java}{17}{23}{java}
+  Libraries:\\
+  https://github.com/extend/sheriff\\
+  https://github.com/rabbitmq/erlando\\
+  https://github.com/si14/z\_validate\\
+  Slides:\\
+  https://github.com/si14/euc-2012-slides
 \end{frame}

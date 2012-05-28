@@ -39,9 +39,9 @@ we will make this validator and it will solve ALL our validation-related
 problems". We still be forced to use nested cases at some point.
 
 So what is the true problem here? In short: we don't have "return". We can't do
-implicit branching, we are forced to use only explicit one. Are we? Wrong. We
-also have exceptions that give us implicit branching. This is the basis of style
-that we all know and love:
+implicit branching, we are forced to use only explicit one. (pause) Well, it's
+not exactly true. We also have exceptions that give us implicit branching. This
+is the basis of style that we all know and love:
 
     {ok, Data} = foo(Smth)
 

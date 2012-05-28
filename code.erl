@@ -64,7 +64,7 @@ test() ->
         A = list_to_integer(StringA),
         B = list_to_integer(StringB),
         {ok, {A, B}}
-    catch error:badarg -> {error, something_is_wrong}
+    catch error:badarg -> {error, smth_is_wrong}
     end.
 
 comma_is_not_so_simple() ->
@@ -118,3 +118,113 @@ write_file(Path, Data, Modes) ->
                              file:sync(Hdl)])),
         file:close(Hdl),
         Result])
+
+validate_some_input(Input) ->
+    try
+        WrappedInput = z_wrap(Input, error_in_foo),
+        Foo = z_bin_to_int(
+                z_proplist_get(MaybeInput, {foo})),
+        SmallFoo = z_int_in_range(Foo, {1, 10}),
+        z_return(z_unwrap(SmallFoo))
+    catch
+        ?Z_OK(Result)   -> {ok, Result};
+        ?Z_ERROR(Error) -> {error, Error}
+    end.
+
+z_extract_small_int(List, Key) ->
+    z_int_in_range(
+      z_bin_to_int(
+        z_proplist_get(List, {Key}),
+       {1, 10})).
+
+-define(Z_CATCH(EXPR, ERROR),
+        try
+            EXPR
+        catch
+            _:_ -> throw({z_throw, {error, ERROR}})
+        end).
+
+try
+    {Method, TaskName, VarSpecs} =
+      ?Z_CATCH({_, _, _} = lists:keyfind(Method, 1, TaskSpecs),
+               bad_method),
+    TaskVarsRoute =
+      ?Z_CATCH([fetch_var(RouteVar, RouteVarType, Bindings)
+                || {RouteVar, RouteVarType} <- RouteVars],
+               bad_route),
+    TaskVars = [?Z_CATCH(fetch_var(Var, VarType, QSVals),
+                         {bad_var, Var})
+                || {Var, VarType} <- VarSpecs],
+    z_return(rnbwdash_task:create(...))
+catch
+    ?Z_OK(Task) -> form_reply(run_task(Task), Errors, Req@);
+    ?Z_ERROR(Err) -> form_error(Err, Req@)
+end
+
+{Method, TaskName, VarSpecs} =
+  ?Z_CATCH({_, _, _} = lists:keyfind(Method, 1,
+                                     TaskSpecs)
+           bad_method)
+
+TaskVarsRoute =
+  ?Z_CATCH([fetch_var(RouteVar, RouteVarType, Bindings)
+            || {RouteVar, RouteVarType} <- RouteVars],
+           bad_route)
+
+TaskVars = [?Z_CATCH(fetch_var(Var, VarType, QSVals),
+                     {bad_var, Var})
+            || {Var, VarType} <- VarSpecs]
+
+error(bad_route) ->
+    {404, <<"Check path variables">>};
+error(bad_method) ->
+    {405, <<"No such method in API">>};
+error({bad_var, Var}) ->
+    {400, [<<"Check variable ">>, Var]}.
+
+-define(GOOD_DATA,
+        [{login, <<"test_login">>},
+         {password, <<"test_password">>},
+         {session_id, <<"123">>},
+         {good_user, <<"true">>},
+         {some_other_id, <<"345">>},
+         {yet_another_id, <<"56">>},
+         {extra_data,
+          term_to_binary({foo, bar, baz})}]).
+
+-define(BAD_DATA1,
+        [{login, <<"test_login">>},
+         {session_id, <<"123">>}, %% no password
+         {good_user, <<"true">>},
+         {some_other_id, <<"345">>},
+         {yet_another_id, <<"56">>},
+         {extra_data,
+          term_to_binary({foo, bar, baz})}]).
+
+-define(BAD_DATA2,
+        [{login, <<"test_login">>},
+         {password, <<"test_password">>},
+         {session_id, <<"123">>},
+         {good_user, <<"true">>},
+         {some_other_id, <<"345">>},
+         {yet_another_id, <<"56abc">>}, %% bad ID
+         {extra_data,
+          term_to_binary({foo, bar, baz})}]).
+
+test_handler_base(Data) ->
+    try
+        Login = proplist_get(Data, login),
+        Password = proplist_get(Data, password),
+        SessionBin = proplist_get(Data, session_id),
+        Session = bin_to_int(SessionBin),
+        GoodUserBin = proplist_get(Data, good_user),
+        GoodUser = bin_to_bool(GoodUserBin),
+        SomeOtherIdBin = proplist_get(Data, some_other_id),
+        SomeOtherId = bin_to_int(SomeOtherIdBin),
+        YetAnotherIdBin = proplist_get(Data, yet_another_id),
+        YetAnotherId = bin_to_int(YetAnotherIdBin),
+        ExtraDataBin = proplist_get(Data, extra_data),
+        ExtraData = bin_to_term(ExtraDataBin),
+        #request{login=Login, password=Password, ...}
+    catch A:B -> {A, B}
+    end.
